@@ -2,6 +2,7 @@ package com.learning.copilot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -16,20 +17,27 @@ public class TaskManager {
 
     /**
      * Constructs a new TaskManager object.
-     * Initializes the tasks list as an empty ArrayList.
+     * Initializes the tasks list as an empty CopyOnWriteArrayList for thread safety.
      */
     public TaskManager() {
-        tasks = new ArrayList<>();
+        tasks = new CopyOnWriteArrayList<>();
     }
 
     /**
      * Adds a new task to the task list.
      *
      * @param description The description of the task to be added.
+     * @return true if the task was added, false if a task with the same description already exists.
      */
-    public void addTask(String description) {
+    public boolean addTask(String description) {
+        for (Task task : tasks) {
+            if (task.getDescription().equals(description)) {
+                return false; // Task with the same description already exists
+            }
+        }
         Task task = new Task(description);
         tasks.add(task);
+        return true;
     }
 
     /**
@@ -38,7 +46,7 @@ public class TaskManager {
      * @return The list of tasks.
      */
     public List<Task> listTasks() {
-        return tasks;
+        return new ArrayList<>(tasks); // Return a copy to prevent external modification
     }
 
     /**
@@ -46,38 +54,42 @@ public class TaskManager {
      * If a task with the given description is found, its 'done' status is set to true.
      *
      * @param description The description of the task to be marked as done.
+     * @return true if the task was found and marked as done, false otherwise.
      */
-    public void markTaskAsDone(String description) {
+    public boolean markTaskAsDone(String description) {
         for (Task task : tasks) {
             if (task.getDescription().equals(description)) {
                 task.setDone(true);
-                break;
+                return true;
             }
         }
+        return false; // Task not found
     }
 
     /**
      * Removes a task from the task manager based on its description.
      *
      * @param description the description of the task to be removed
+     * @return true if the task was found and removed, false otherwise.
      */
-    public void removeTask(String description) {
+    public boolean removeTask(String description) {
         for (Task task : tasks) {
             if (task.getDescription().equals(description)) {
                 tasks.remove(task);
-                break;
+                return true;
             }
         }
+        return false; // Task not found
     }
 
     /**
      * Represents a task with a description and a 'done' status.
      */
-    public class Task {
+    public static class Task {
         /**
          * The description of the task.
          */
-        private String description;
+        private final String description;
 
         /**
          * The status of the task (true if done, false otherwise).

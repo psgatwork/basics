@@ -23,11 +23,21 @@ public class TaskManagerTest {
 
     @Test
     public void testAddTask() {
-        taskManager.addTask("Test Task 1");
+        boolean added = taskManager.addTask("Test Task 1");
+        assertTrue(added, "Task should be added successfully");
         List<TaskManager.Task> tasks = taskManager.listTasks();
         assertEquals(1, tasks.size(), "Task list should contain one task");
         assertEquals("Test Task 1", tasks.get(0).getDescription(), "Task description should match");
         assertFalse(tasks.get(0).isDone(), "New task should not be marked as done");
+    }
+
+    @Test
+    public void testAddDuplicateTask() {
+        taskManager.addTask("Test Task 1");
+        boolean added = taskManager.addTask("Test Task 1");
+        assertFalse(added, "Duplicate task should not be added");
+        List<TaskManager.Task> tasks = taskManager.listTasks();
+        assertEquals(1, tasks.size(), "Task list should contain one task");
     }
 
     @Test
@@ -43,18 +53,32 @@ public class TaskManagerTest {
     @Test
     public void testMarkTaskAsDone() {
         taskManager.addTask("Test Task 1");
-        taskManager.markTaskAsDone("Test Task 1");
+        boolean marked = taskManager.markTaskAsDone("Test Task 1");
+        assertTrue(marked, "Task should be marked as done successfully");
         List<TaskManager.Task> tasks = taskManager.listTasks();
         assertTrue(tasks.get(0).isDone(), "Task should be marked as done");
+    }
+
+    @Test
+    public void testMarkNonExistentTaskAsDone() {
+        boolean marked = taskManager.markTaskAsDone("Non-existent Task");
+        assertFalse(marked, "Non-existent task should not be marked as done");
     }
 
     @Test
     public void testRemoveTask() {
         taskManager.addTask("Test Task 1");
         taskManager.addTask("Test Task 2");
-        taskManager.removeTask("Test Task 1");
+        boolean removed = taskManager.removeTask("Test Task 1");
+        assertTrue(removed, "Task should be removed successfully");
         List<TaskManager.Task> tasks = taskManager.listTasks();
         assertEquals(1, tasks.size(), "Task list should contain one task");
         assertEquals("Test Task 2", tasks.get(0).getDescription(), "Remaining task description should match");
+    }
+
+    @Test
+    public void testRemoveNonExistentTask() {
+        boolean removed = taskManager.removeTask("Non-existent Task");
+        assertFalse(removed, "Non-existent task should not be removed");
     }
 }
