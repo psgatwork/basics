@@ -47,4 +47,14 @@ public class TaskManagerTest {
         List<TaskManager.Task> tasks = taskManager.listTasks();
         assertTrue(tasks.get(0).isDone(), "Task should be marked as done");
     }
+
+    @Test
+    public void testRemoveTask() {
+        taskManager.addTask("Test Task 1");
+        taskManager.addTask("Test Task 2");
+        taskManager.removeTask("Test Task 1");
+        List<TaskManager.Task> tasks = taskManager.listTasks();
+        assertEquals(1, tasks.size(), "Task list should contain one task");
+        assertEquals("Test Task 2", tasks.get(0).getDescription(), "Remaining task description should match");
+    }
 }

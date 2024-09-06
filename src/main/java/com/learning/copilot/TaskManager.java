@@ -57,6 +57,20 @@ public class TaskManager {
     }
 
     /**
+     * Removes a task from the task manager based on its description.
+     *
+     * @param description the description of the task to be removed
+     */
+    public void removeTask(String description) {
+        for (Task task : tasks) {
+            if (task.getDescription().equals(description)) {
+                tasks.remove(task);
+                break;
+            }
+        }
+    }
+
+    /**
      * Represents a task with a description and a 'done' status.
      */
     public class Task {
@@ -108,4 +122,5 @@ public class TaskManager {
             this.done = done;
         }
     }
+
 }
